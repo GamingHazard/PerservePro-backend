@@ -83,7 +83,7 @@ app.use((err, req, res, next) => {
 
 // const HOST = "192.168.43.211"; // Specify the IP address here "192.168.188.3" ||
 // Start server
-const PORT = process.env.PORT || 55000;
+const PORT = process.env.PORT || 10000;
 app.listen(() => {
   console.log(`Server is running on  ${PORT}`);
 });
