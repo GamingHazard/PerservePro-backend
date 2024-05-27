@@ -63,9 +63,27 @@ app.use((err, req, res, next) => {
   res.status(500).send("Something went wrong!");
 });
 
-const HOST = "192.168.43.211"; // Specify the IP address here "192.168.188.3" ||
+const ipAddresses = [
+  "44.226.145.213",
+  "54.187.200.255",
+  "34.213.214.55",
+  "35.164.95.156",
+  "44.230.95.183",
+  "44.229.200.200",
+];
+
+// Function to select a random IP address
+function getRandomIpAddress() {
+  const randomIndex = Math.floor(Math.random() * ipAddresses.length);
+  return ipAddresses[randomIndex];
+}
+
+// Select a random IP address and store it in a constant called HOST
+const HOST = getRandomIpAddress();
+
+// const HOST = "192.168.43.211"; // Specify the IP address here "192.168.188.3" ||
 // Start server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, HOST, () => {
   console.log(`Server is running on ${HOST}:${PORT}`);
 });
