@@ -1,20 +1,5 @@
- # Node modules directory
-./node_modules
+ # Ignore node_modules directory
+node_modules/
 
-# Environment variables file
-./.env
-
-# Log files
-*.log
-
-# Build output
-dist/
-build/
-
-# OS-specific files
-.DS_Store
-Thumbs.db
-
-# IDE-specific files
-.vscode/
-.idea/
+# Ignore .env files
+.env
