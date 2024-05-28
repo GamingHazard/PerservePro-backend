@@ -63,9 +63,9 @@ app.use((err, req, res, next) => {
   res.status(500).send("Something went wrong!");
 });
 
-const HOST = "192.168.43.211"; // Specify the IP address here "192.168.188.3" ||
+const HOST = "0.0.0.0"; // Specify the IP address here "192.168.188.3" ||
 // Start server
 const PORT = process.env.PORT || 10000;
-app.listen(() => {
+app.listen(PORT, HOST, () => {
   console.log(`Server is running on  ${PORT}`);
 });
