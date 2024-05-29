@@ -67,6 +67,6 @@ app.use((err, req, res, next) => {
 // const HOST = "35.157.117.28"; // Host
 const PORT = process.env.PORT || 10000; // Port
 
-app.listen(() => {
+app.listen(PORT,() => {
   console.log(`Server is running on ${PORT}`);
 });
