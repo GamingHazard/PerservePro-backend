@@ -64,9 +64,9 @@ app.use((err, req, res, next) => {
   res.status(500).send("Something went wrong!");
 });
 
-const HOST = "3.125.183.140"; // Host
+// const HOST = "35.157.117.28"; // Host
 const PORT = process.env.PORT || 10000; // Port
 
-app.listen(PORT, HOST, () => {
+app.listen(() => {
   console.log(`Server is running on ${PORT}`);
 });
