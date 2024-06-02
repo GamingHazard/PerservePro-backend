@@ -31,32 +31,16 @@ app.use(
 
 // Routes
 const userRoutes = require("./routes/users");
-const customerRoutes = require("./routes/customers");
-const employeeRoutes = require("./routes/employees");
-const infrastructureRoutes = require("./routes/infrastructure");
-const machineRoutes = require("./routes/machines");
-const plantationRoutes = require("./routes/plantation");
-const recordRoutes = require("./routes/records");
-const salesRoutes = require("./routes/sales");
-const storageRoutes = require("./routes/storage");
-const shopRoutes = require("./routes/shop");
-const toolRoutes = require("./routes/tools");
-const lossRoutes = require("./routes/loss");
-const marketRoutes = require("./routes/market");
+const profileRoutes = require("./routes/profileRoutes");
+const postRoutes = require("./routes/postRoutes");
+const marketRoutes = require("./routes/marketRoutes");
+const productRoutes = require("./routes/productRoutes");
 
 app.use("/user", userRoutes);
-app.use("/customers", customerRoutes);
-app.use("/employees", employeeRoutes);
-app.use("/infrastructure", infrastructureRoutes);
-app.use("/machines", machineRoutes);
-app.use("/plantation", plantationRoutes);
-app.use("/records", recordRoutes);
-app.use("/sales", salesRoutes);
-app.use("/storage", storageRoutes);
-app.use("/shop", shopRoutes);
-app.use("/tools", toolRoutes);
-app.use("/loss", lossRoutes);
+app.use("/profile", profileRoutes);
+app.use("/posts", postRoutes);
 app.use("/market", marketRoutes);
+app.use("/store", productRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

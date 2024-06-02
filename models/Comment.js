@@ -1,20 +1,18 @@
 const mongoose = require("mongoose");
 
-const marketSchema = new mongoose.Schema({
-  name: {
+const commentSchema = new mongoose.Schema({
+  content: {
     type: String,
     required: true,
   },
-  description: {
-    type: String,
+  postId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Post",
     required: true,
   },
-  region: {
+  author: {
     type: String,
     required: true,
-  },
-  image: {
-    type: String,
   },
   createdAt: {
     type: Date,
@@ -22,4 +20,4 @@ const marketSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Market", marketSchema);
+module.exports = mongoose.model("Comment", commentSchema);
