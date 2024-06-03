@@ -90,7 +90,7 @@ const CreatePost = () => {
       <TouchableOpacity style={styles.postButton} onPress={handleSubmit}>
         <Text style={styles.postButtonText}>Post</Text>
       </TouchableOpacity>
-      {loading && <LoadingScreen visible={loading} />}{" "}
+      {loading && <LoadingScreen visible={loading} />}
       {/* Show LoadingScreen when loading */}
     </View>
   );

@@ -1,87 +1,156 @@
 import React, { useState } from "react";
 import {
   View,
-  Button,
-  Image,
   Text,
-  ScrollView,
   StyleSheet,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  Linking,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
+import ImagePickerComponent from "./ImageUpload"; // Ensure you have this component implemented
 
 const PestsDiseases = () => {
   const [image, setImage] = useState(null);
   const [diagnosis, setDiagnosis] = useState(null);
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImage(result.uri);
-    }
+  const handleImageUpload = (uploadedImage) => {
+    setImage(uploadedImage);
+    sendImageForDiagnosis(uploadedImage);
   };
 
-  const diagnosePlant = async () => {
-    const API_KEY = "HfrpH4432kvEGPXCyWZNVQPNAmfy2bzv43Lda7v1Qbo2Q1Rfbg"; // Replace with your actual API key
-    const ACCESS_TOKEN = "KypIENdUcKEx7RL"; // Replace with the access token received from the image upload
-    const API_ENDPOINT = `https://crop.kindwise.com/api/v1/identification/${ACCESS_TOKEN}?details=type,common_names,eppo_code,wiki_url,taxonomy&language=en`;
+  const sendImageForDiagnosis = async (uri) => {
+    let formData = new FormData();
+    formData.append("images", {
+      uri: uri,
+      name: "image.jpg",
+      type: "image/jpg",
+    });
+    formData.append("latitude", 49.207);
+    formData.append("longitude", 16.608);
+    formData.append("similar_images", true);
 
     try {
-      const response = await axios.get(API_ENDPOINT, {
-        headers: {
-          "Api-Key": API_KEY,
-        },
-      });
-
-      setDiagnosis(response.data.result);
+      let response = await axios.post(
+        "https://crop.kindwise.com/api/v1/identification",
+        formData,
+        {
+          headers: {
+            "Api-Key": "HfrpH4432kvEGPXCyWZNVQPNAmfy2bzv43Lda7v1Qbo2Q1Rfbg",
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      setDiagnosis(response.data);
     } catch (error) {
       console.error(error);
     }
   };
 
+  const getDiagnosedData = async () => {
+    try {
+      let response = await axios.get(
+        `https://crop.kindwise.com/api/v1/identification/${diagnosis.access_token}?details=type,common_names,eppo_code,wiki_url,taxonomy&language=en`,
+        {
+          headers: {
+            "Api-Key": "HfrpH4432kvEGPXCyWZNVQPNAmfy2bzv43Lda7v1Qbo2Q1Rfbg",
+          },
+        }
+      );
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const deleteDiagnosis = async () => {
+    try {
+      let response = await axios.delete(
+        `https://crop.kindwise.com/api/v1/identification/${diagnosis.access_token}`,
+        {
+          headers: {
+            "Api-Key": "HfrpH4432kvEGPXCyWZNVQPNAmfy2bzv43Lda7v1Qbo2Q1Rfbg",
+          },
+        }
+      );
+      console.log(response);
+      setDiagnosis(null);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const renderDisease = (disease) => {
+    return (
+      <View key={disease.name} style={styles.diseaseContainer}>
+        <Text style={styles.diseaseName}>{disease.name}</Text>
+        <Text style={styles.probability}>
+          Probability: {disease.probability}
+        </Text>
+
+        <Text style={styles.sectionTitle}>Similar Images</Text>
+        {disease.similar_images.map((image, index) => (
+          <View key={index} style={styles.imageContainer}>
+            <Image source={{ uri: image.url_small }} style={styles.image} />
+            <Text>Similarity: {image.similarity}</Text>
+            <Text>Citation: {image.citation}</Text>
+          </View>
+        ))}
+
+        <Text style={styles.sectionTitle}>Details</Text>
+        <Text>
+          Common Names:{" "}
+          {disease.details.common_names
+            ? disease.details.common_names.join(", ")
+            : "N/A"}
+        </Text>
+        <Text>Type: {disease.details.type}</Text>
+        <Text>Scientific Name: {disease.scientific_name}</Text>
+        <Text>EPPO Code: {disease.details.eppo_code}</Text>
+        <TouchableOpacity
+          onPress={() => Linking.openURL(disease.details.wiki_url)}
+        >
+          <Text style={styles.link}>Wiki URL: {disease.details.wiki_url}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
-      <Button title="Pick an image from camera roll" onPress={pickImage} />
-      {image && <Image source={{ uri: image }} style={styles.image} />}
-      <Button title="Diagnose Plant" onPress={diagnosePlant} />
-      {diagnosis && (
-        <ScrollView style={styles.diagnosisContainer}>
-          <Text style={styles.heading}>Diagnosis Results:</Text>
-          <Text style={styles.subheading}>
-            Is Plant: {diagnosis.is_plant.binary ? "Yes" : "No"}
-          </Text>
-          {diagnosis.disease && (
-            <View>
-              <Text style={styles.subheading}>Disease Suggestions:</Text>
-              {diagnosis.disease.suggestions.map((suggestion, index) => (
-                <View key={index} style={styles.itemContainer}>
-                  <Text>Name: {suggestion.name}</Text>
-                  <Text>Probability: {suggestion.probability}</Text>
-                  {/* You can render more details here */}
-                </View>
-              ))}
+      <Text style={styles.heading}>Pest And Disease Detector</Text>
+
+      <ImagePickerComponent
+        ImgContainer={styles.imgContainer}
+        onImageSelected={handleImageUpload}
+        btnSyl={styles.imgBtn}
+      />
+      <Text style={styles.heading}>Diagnosis Result:</Text>
+
+      <ScrollView>
+        {image && !diagnosis && (
+          <View>
+            <Text>Image uploaded successfully, awaiting diagnosis...</Text>
+          </View>
+        )}
+        {diagnosis && (
+          <View style={styles.diagnosisContainer}>
+            {diagnosis.result.disease.suggestions.map(renderDisease)}
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={getDiagnosedData}
+              >
+                <Text style={styles.buttonText}>Get Diagnosed Data</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={deleteDiagnosis}>
+                <Text style={styles.buttonText}>Delete Diagnosis</Text>
+              </TouchableOpacity>
             </View>
-          )}
-          {diagnosis.crop && (
-            <View>
-              <Text style={styles.subheading}>Crop Suggestions:</Text>
-              {diagnosis.crop.suggestions.map((suggestion, index) => (
-                <View key={index} style={styles.itemContainer}>
-                  <Text>Name: {suggestion.name}</Text>
-                  <Text>Probability: {suggestion.probability}</Text>
-                  {/* You can render more details here */}
-                </View>
-              ))}
-            </View>
-          )}
-        </ScrollView>
-      )}
+          </View>
+        )}
+      </ScrollView>
     </View>
   );
 };
@@ -89,179 +158,77 @@ const PestsDiseases = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
     padding: 20,
-  },
-  image: {
-    width: 200,
-    height: 200,
-    marginTop: 20,
-    marginBottom: 20,
+    backgroundColor: "#f0f0f0",
+    marginTop: 30,
   },
   diagnosisContainer: {
+    alignItems: "center",
     marginTop: 20,
-    padding: 10,
-    backgroundColor: "#f0f0f0",
-    borderRadius: 5,
+    // backgroundColor: "lightgreen",
   },
   heading: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
+    alignSelf: "center",
   },
-  subheading: {
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    marginTop: 20,
+  },
+  imgContainer: {
+    width: "100%",
+    alignItems: "center",
+    marginBottom: 20,
+    // backgroundColor: "lightblue",
+  },
+  imgBtn: { top: -50, height: 55 },
+  diseaseContainer: {
+    padding: 10,
+    backgroundColor: "#fff",
+    marginBottom: 10,
+    borderRadius: 8,
+    // backgroundColor: "lightblue",
+    width: "100%",
+    elevation: 8,
+  },
+  diseaseName: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  probability: {
+    marginBottom: 10,
+  },
+  sectionTitle: {
     fontSize: 16,
     fontWeight: "bold",
     marginTop: 10,
   },
-  itemContainer: {
-    marginTop: 5,
+  imageContainer: {
+    marginBottom: 10,
+    width: "100%",
+  },
+  image: {
+    width: "100%",
+    height: 100,
+    resizeMode: "contain",
+  },
+  link: {
+    color: "blue",
+    textDecorationLine: "underline",
+  },
+  button: {
+    backgroundColor: "#007BFF",
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
   },
 });
 
 export default PestsDiseases;
-
-// import React, { useState } from "react";
-// import {
-//   View,
-//   Text,
-//   Button,
-//   Image,
-//   TouchableOpacity,
-//   StyleSheet,
-// } from "react-native";
-// import * as ImagePicker from "expo-image-picker";
-// import axios from "axios";
-// import ImagePickerComponent from "./ImageUpload";
-
-// const PestsDiseases = () => {
-//   const [image, setImage] = useState(null);
-//   const [diagnosis, setDiagnosis] = useState(null);
-
-//   const handleImageUpload = (uploadedImage) => {
-//     setImage(uploadedImage);
-//     sendImageForDiagnosis(uploadedImage);
-//   };
-
-//   const sendImageForDiagnosis = async (uri) => {
-//     let formData = new FormData();
-//     formData.append("images", {
-//       uri: uri,
-//       name: "image.jpg",
-//       type: "image/jpg",
-//     });
-//     formData.append("latitude", 49.207);
-//     formData.append("longitude", 16.608);
-//     formData.append("similar_images", true);
-
-//     try {
-//       let response = await axios.post(
-//         "https://crop.kindwise.com/api/v1/identification",
-//         formData,
-//         {
-//           headers: {
-//             "Api-Key": "HfrpH4432kvEGPXCyWZNVQPNAmfy2bzv43Lda7v1Qbo2Q1Rfbg",
-//             "Content-Type": "multipart/form-data",
-//           },
-//         }
-//       );
-//       setDiagnosis(response.data);
-//     } catch (error) {
-//       console.error(error);
-//     }
-//   };
-
-//   const getDiagnosedData = async () => {
-//     try {
-//       let response = await axios.get(
-//         `https://crop.kindwise.com/api/v1/identification/${diagnosis.access_token}?details=type,common_names,eppo_code,wiki_url,taxonomy&language=en`,
-//         {
-//           headers: {
-//             "Api-Key": "HfrpH4432kvEGPXCyWZNVQPNAmfy2bzv43Lda7v1Qbo2Q1Rfbg",
-//           },
-//         }
-//       );
-//       console.log(response.data);
-//     } catch (error) {
-//       console.error(error);
-//     }
-//   };
-
-//   const deleteDiagnosis = async () => {
-//     try {
-//       let response = await axios.delete(
-//         `https://crop.kindwise.com/api/v1/identification/${diagnosis.access_token}`,
-//         {
-//           headers: {
-//             "Api-Key": "HfrpH4432kvEGPXCyWZNVQPNAmfy2bzv43Lda7v1Qbo2Q1Rfbg",
-//           },
-//         }
-//       );
-//       console.log(response.data);
-//     } catch (error) {
-//       console.error(error);
-//     }
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <ImagePickerComponent
-//         ImgContainer={styles.imgContainer}
-//         onImageSelected={handleImageUpload}
-//         btnSyl={styles.imgBtn}
-//       />
-//       {image && !diagnosis && (
-//         <Image source={{ uri: image }} style={styles.image} />
-//       )}
-//       {diagnosis && (
-//         <View style={styles.diagnosisContainer}>
-//           <Text style={styles.heading}>Diagnosis Result:{data}</Text>
-//           <View style={styles.buttonContainer}>
-//             <Button
-//               title="Get Diagnosed Data"
-//               onPress={getDiagnosedData}
-//               style={styles.button}
-//             />
-//             <Button
-//               title="Delete Diagnosis"
-//               onPress={deleteDiagnosis}
-//               style={styles.button}
-//             />
-//           </View>
-//         </View>
-//       )}
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     padding: 20,
-//     backgroundColor: "#f0f0f0",
-//     top: 30,
-//   },
-//   image: {
-//     width: 200,
-//     height: 200,
-//     marginBottom: 20,
-//   },
-//   diagnosisContainer: {
-//     alignItems: "center",
-//   },
-//   heading: {
-//     fontSize: 20,
-//     fontWeight: "bold",
-//     marginBottom: 10,
-//   },
-//   buttonContainer: {
-//     flexDirection: "row",
-//     justifyContent: "space-around",
-//     width: "100%",
-//   },
-//   imgContainer: { width: 400 },
-//   imgBtn: { width: 60 },
-// });
-
-// export default PestsDiseases;

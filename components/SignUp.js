@@ -5,6 +5,7 @@ import Btn from "./Btn";
 import { AuthContext } from "./AuthContext ";
 import axios from "axios";
 import LoadingScreen from "./LoadingScreen"; // Import the LoadingScreen component
+import { TouchableOpacity } from "react-native";
 
 const SignUp = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -53,7 +54,13 @@ const SignUp = ({ navigation }) => {
         style={styles.input}
       />
       <Btn btnStyle={styles.btn} btnText={"SIGN UP"} action={handleSignUp} />
-      {loading && <LoadingScreen visible={loading} />}{" "}
+      <View style={styles.footer}>
+        <Text>Already have an account?</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+          <Text style={styles.signUpText}>Login</Text>
+        </TouchableOpacity>
+      </View>
+      {loading && <LoadingScreen visible={loading} />}
       {/* Show LoadingScreen when loading */}
     </View>
   );
@@ -86,6 +93,17 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 10,
     height: 40,
+  },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginVertical: 10,
+  },
+  signUpText: {
+    fontWeight: "bold",
+    fontSize: 16,
+    color: "#65000B",
+    marginLeft: 5,
   },
 });
 

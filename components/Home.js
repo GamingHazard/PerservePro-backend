@@ -45,14 +45,14 @@ const HomePage = () => {
 
         <View style={styles.tipsContainer}>
           <TouchableOpacity
-            onPress={() => navigation.navigate("Tips")}
+            onPress={() => navigation.navigate("StoreManagement")}
             style={styles.tipCard}
           >
             <Image
               style={styles.tipImage}
               source={require("../assets/tip3.jpg")}
             />
-            <Text style={styles.tipText}>Tips</Text>
+            <Text style={styles.tipText}>Store</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate("PestsDiseases")}

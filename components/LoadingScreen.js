@@ -9,7 +9,7 @@ const LoadingScreen = ({ visible }) => {
       <AnimatedLoader
         visible={visible}
         overlayColor="rgba(255,255,255,0.75)"
-        source={require("../assets/animation/Animation1.json")} // Specify your animation JSON file
+        source={require("../assets/animation/Animation2.json")} // Specify your animation JSON file
         animationStyle={styles.lottie}
         speed={1}
       />
@@ -24,8 +24,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   lottie: {
-    width: 100,
-    height: 100,
+    width: 300,
+    height: 300,
   },
 });
 

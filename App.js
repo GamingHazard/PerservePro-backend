@@ -7,6 +7,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { AuthProvider } from "./components/AuthContext ";
 
 import screens from "./components/Screen";
+import Login from "./components/Login";
+import SignUp from "./components/SignUp";
 // Create stack and tab navigators
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -14,6 +16,12 @@ const Tab = createBottomTabNavigator();
 // Auth stack for login and signup
 const AuthStack = () => (
   <Stack.Navigator>
+    <Stack.Screen
+      options={{ headerShown: false }}
+      name="Login"
+      component={Login}
+    />
+    <Stack.Screen name="SignUp" component={SignUp} />
     {screens.map((screen) => (
       <Stack.Screen
         key={screen.name}

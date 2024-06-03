@@ -77,7 +77,7 @@ const Login = ({ navigation }) => {
           <Text style={styles.signUpText}>Sign Up</Text>
         </TouchableOpacity>
       </View>
-      {loading && <LoadingScreen visible={loading} />}{" "}
+      {loading && <LoadingScreen visible={loading} />}
       {/* Show LoadingScreen when loading */}
     </View>
   );

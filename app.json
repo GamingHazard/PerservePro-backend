@@ -14,7 +14,7 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "Your message explaining why you need access to the camera"
+        "NSCameraUsageDescription": "just wanna view use you camera to view your ugly ass face"
       }
     },
     "android": {
@@ -34,7 +34,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "f94f1075-305c-4a83-88d7-968b37f4e41a"
+        "projectId": "03734cca-ae4e-44ca-bb58-303c52490717"
       }
     }
   }

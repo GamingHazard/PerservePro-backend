@@ -11,7 +11,6 @@ export const container = {
   flex: 1,
   padding: 10,
   backgroundColor: "lightgrey",
-  top: 30,
 };
 
 export const Inputs = {

@@ -29,11 +29,11 @@ import MarketForm from "./Market.js copy/MarketForm";
 import SelectedMarket from "./Market.js copy/SelectedMarket";
 import MarketCustomersForm from "./Market.js copy/MarketCustomersForm";
 import MarketCustomersInfo from "./Market.js copy/MarketCustomerInfo";
+import StoreManagement from "./StoreManagementSystem";
 
 const screens = [
   { name: "Home", component: HomePage, protected: true }, // Add the Home screen to the list of screens  { name: "Profile", component: Profile,  protected: true },
-  { name: "Login", component: Login, protected: false },
-  { name: "SignUp", component: SignUp, protected: false },
+
   { name: "Preservation Page", component: PreservationPage, protected: true },
   { name: "PestsDiseases", component: PestsDiseases, protected: true },
   { name: "Weather", component: Weather, protected: true },
@@ -60,6 +60,7 @@ const screens = [
   { name: "MarketPage", component: MarketPage, protected: true },
   { name: "MarketForm", component: MarketForm, protected: true },
   { name: "SelectedMarket", component: SelectedMarket, protected: true },
+  { name: "StoreManagement", component: StoreManagement, protected: true },
   {
     name: "MarketCustomersInfo",
     component: MarketCustomersInfo,

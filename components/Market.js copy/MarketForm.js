@@ -8,7 +8,7 @@ import LoadingScreen from "../LoadingScreen";
 
 const MarketForm = () => {
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const [district, setDistrict] = useState("");
   const [image, setImage] = useState(null); // Store image URI
   const [loading, setLoading] = useState(false);
   const [region, setRegion] = useState("");
@@ -50,7 +50,7 @@ const MarketForm = () => {
       Alert.alert("Success", "Market created successfully");
       // Clear the form
       setName("");
-      setDescription("");
+      setDistrict("");
       setRegion("");
       setSelectedImage(null);
     } catch (error) {
@@ -87,7 +87,7 @@ const MarketForm = () => {
         style={styles.input}
         value={description}
         multiline={true}
-        onChangeText={setDescription}
+        onChangeText={setDistrict}
         placeholder="Enter market description"
       />
       <Text style={styles.label}>Region</Text>
