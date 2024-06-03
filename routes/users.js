@@ -3,6 +3,7 @@ const router = express.Router();
 const nodemailer = require("nodemailer");
 const User = require("../models/users");
 
+// Sign Up Route
 router.post("/signup", async (req, res) => {
   const { email, password } = req.body;
   console.log(email, password);
@@ -11,9 +12,10 @@ router.post("/signup", async (req, res) => {
     if (existingUser) {
       return res.status(400).send("Email already exists");
     }
+    // Save password in plain text (for testing purposes only)
     const newUser = new User({
       email,
-      password,
+      password, // Password is saved plainly
     });
     await newUser.save();
     const token = newUser.generateAuthToken();
@@ -24,10 +26,11 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+// Login Route
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await User.authenticate(email, password);
+    const user = await User.findOne({ email, password });
     if (!user) {
       return res.status(401).send("Invalid email or password");
     }
@@ -39,6 +42,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// Forgot Password Route
 router.post("/forgot-password", async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
@@ -72,6 +76,7 @@ router.post("/forgot-password", async (req, res) => {
   }
 });
 
+// Reset Password Route
 router.post("/reset-password/:token", async (req, res) => {
   try {
     const user = await User.findOne({
@@ -81,7 +86,7 @@ router.post("/reset-password/:token", async (req, res) => {
     if (!user) {
       return res.status(404).send("Invalid or expired token");
     }
-    user.password = req.body.password;
+    user.password = req.body.password; // Save new password plainly
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();

@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema({
@@ -16,21 +15,15 @@ const userSchema = new mongoose.Schema({
   resetPasswordExpires: Date,
 });
 
-userSchema.pre("save", async function (next) {
-  const user = this;
-  if (user.isModified("password")) {
-    user.password = await bcrypt.hash(user.password, 10);
-  }
+// Remove the password hashing middleware
+userSchema.pre("save", function (next) {
   next();
 });
 
+// Simplify the authenticate method to compare plain text passwords
 userSchema.statics.authenticate = async function (email, password) {
-  const user = await this.findOne({ email });
+  const user = await this.findOne({ email, password });
   if (!user) {
-    return null; // Return null instead of throwing error
-  }
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
     return null; // Return null instead of throwing error
   }
   return user;
