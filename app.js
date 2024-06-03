@@ -38,7 +38,7 @@ app.use("/user", userRoutes);
 app.use("/profile", profileRoutes);
 app.use("/store", productRoutes);
 app.use("/post", postRoutes);
-app.use("/market", marketRoutes);
+app.use("/markets", marketRoutes);
 app.use("/comment", commentRoutes);
 
 // Error handling middleware
