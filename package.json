@@ -4,7 +4,7 @@
   "description": "",
   "main": "advert controller.js",
   "scripts": {
-    "start": "nodemon app.js",
+    "start": "forever start app.js",
     "dev": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
