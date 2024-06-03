@@ -31,14 +31,14 @@ const userRoutes = require("./routes/users");
 const profileRoutes = require("./routes/profileRoutes");
 const productRoutes = require("./routes/productRoutes");
 const postRoutes = require("./routes/postRoutes");
-const marketRoutes = require("./routes/marketRoutes");
+// const marketRoutes = require("./routes/marketRoutes");
 const commentRoutes = require("./routes/commentRoutes");
 
 app.use("/user", userRoutes);
 app.use("/profile", profileRoutes);
 app.use("/store", productRoutes);
 app.use("/post", postRoutes);
-app.use("/markets", marketRoutes);
+// app.use("/markets", marketRoutes);
 app.use("/comment", commentRoutes);
 
 // Error handling middleware
