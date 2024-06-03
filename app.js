@@ -1,56 +1,53 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const morgan = require("morgan");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-require("dotenv").config(); // Require dotenv and configure it
+import "react-native-gesture-handler";
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-const app = express();
+import { AuthProvider } from "./components/AuthContext ";
 
-// MongoDB connection
-mongoose
-  .connect(process.env.mongoURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+import screens from "./components/Screen";
+import Login from "./components/Login";
+import SignUp from "./components/SignUp";
+// Create stack and tab navigators
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
-// Middleware
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(morgan("dev"));
-
-// Enable CORS
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL || "*", // Replace with your frontend URL
-    optionsSuccessStatus: 200,
-  })
+// Auth stack for login and signup
+const AuthStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen
+      options={{ headerShown: false }}
+      name="Login"
+      component={Login}
+    />
+    <Stack.Screen name="SignUp" component={SignUp} />
+    {screens.map((screen) => (
+      <Stack.Screen
+        key={screen.name}
+        name={screen.name}
+        component={screen.component}
+        options={{ headerShown: false, ...(screen.options || {}) }}
+      />
+    ))}
+  </Stack.Navigator>
 );
 
-// Routes
-const userRoutes = require("./routes/users");
-const profileRoutes = require("./routes/profileRoutes");
-const postRoutes = require("./routes/postRoutes");
-const marketRoutes = require("./routes/marketRoutes");
-const productRoutes = require("./routes/productRoutes");
+// Main App component with navigation container
+const App = () => {
+  return (
+    <AuthProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Auth">
+          <Stack.Screen
+            name="Auth"
+            component={AuthStack}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AuthProvider>
+  );
+};
 
-app.use("/user", userRoutes);
-app.use("/profile", profileRoutes);
-app.use("/posts", postRoutes);
-app.use("/market", marketRoutes);
-app.use("/store", productRoutes);
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send("Something went wrong!");
-});
-
-// const HOST = "35.157.117.28"; // Host
-const PORT = process.env.PORT || 10000; // Port
-
-app.listen(PORT, () => {
-  console.log(`Server is running on ${PORT}`);
-});
+export default App;
